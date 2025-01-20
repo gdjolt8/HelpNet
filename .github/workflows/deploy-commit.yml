@@ -1,0 +1,33 @@
+name: Commit on Vercel Deployment
+
+# Trigger the workflow on repository dispatch or manual trigger
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [vercel-deploy] # Matches event sent by Vercel
+
+jobs:
+  commit-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Make changes (customize as needed)
+      - name: Make changes
+        run: |
+          echo "Deployment completed on $(date)" >> DEPLOYMENT_LOG.txt
+          git add DEPLOYMENT_LOG.txt
+
+      # Step 3: Commit changes
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git commit -m "Deployment update: $(date)" || echo "No changes to commit"
+
+      # Step 4: Push changes
+      - name: Push changes
+        run: git push
