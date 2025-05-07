@@ -9,6 +9,7 @@ import { ChartBarIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
+import { PublicUserInfo } from "@/app/api/getUserInfo/route";
 
 const Modal = ({ isOpen, onClose, children }: { isOpen: boolean; onClose: () => void; children: React.ReactNode }) => {
   if (!isOpen) return null;
@@ -34,6 +35,7 @@ type PostProps = {
 const PostCard = ({ post }: PostProps) => {
   const [likes, setLikes] = useState(post.likes);
   const [user, setUser] = useState<User | null>(null);
+  const [author, setAuthor] = useState<PublicUserInfo | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
@@ -47,6 +49,13 @@ const PostCard = ({ post }: PostProps) => {
   const getUser = useCallback(async () => {
     const cookie = Cookies;
     const e = await getToken(String(cookie.get("authorization")));
+    const author = await fetch("/api/getUserInfo", {
+      method: "POST",
+      body: JSON.stringify({username: post.author})
+    });
+
+    const acc = (await author.json()).user;
+    setAuthor(acc);
     setUser(e.account);
   }, []);
 
@@ -119,7 +128,7 @@ const PostCard = ({ post }: PostProps) => {
         <Link href={`/profile?username=${post.author}`} onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-4">
             <img
-              src={user?.profile_picture_url || "/default-avatar.png"}
+              src={author?.profile_picture_url || "/default-avatar.png"}
               alt={`${post.author}'s profile`}
               className="w-10 h-10 rounded-full object-cover"
             />

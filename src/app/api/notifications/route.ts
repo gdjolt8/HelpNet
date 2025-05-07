@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     await connectToDatabase();
     const {token} = await req.json();
     const user = await getToken(token);
-    
+    console.log(user);
     try {
     if (!user.ok) { return new Response(JSON.stringify({ok: false}), {status: 400});}
     const notifications = await Notification.find({ userId: user.account._id }).maxTimeMS(1000);

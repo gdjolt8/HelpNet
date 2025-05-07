@@ -27,7 +27,7 @@ const Sidebar = ({ username }: { username: string | undefined }) => {
         // Fetch notifications for the logged-in user)
         const res = await fetch(`/api/notifications`, { method: "POST", body: JSON.stringify({ token }) });
         const data = await res.json();
-
+        console.log(userVerification.account);
         setNotifications(data.notifications); // Update notifications state
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -84,9 +84,9 @@ const Sidebar = ({ username }: { username: string | undefined }) => {
       {/* Notifications Dropdown */}
       {notifications.length > 0 && (
         <div className="mt-4 bg-gray-100 p-4 rounded">
-          <h3 className="text-lg font-semibold">Notifications</h3>
+          <h3 className="text-lg font-semibold py-1">Notifications</h3>
           <ul>
-            {notifications.slice(0, 3).map((notification) => (
+            {notifications.slice(notifications.length - 3, notifications.length).map((notification) => (
               <li
                 key={notification._id}
                 className={`p-2 ${notification.read ? "bg-gray-200" : "bg-blue-100"} mb-2`}
@@ -117,6 +117,7 @@ const Sidebar = ({ username }: { username: string | undefined }) => {
         )}
         <Link href="/logout" className="block w-full text-left p-2 rounded hover:bg-gray-200">Logout</Link>
         <Link href={`/profile?user=${user?.username}`} className="block w-full text-left p-2 rounded hover:bg-gray-200">Profile</Link>
+        <Link href={`/settings`} className="block w-full text-left p-2 rounded hover:bg-gray-200">Settings</Link>
       </nav>
     </aside>
   );

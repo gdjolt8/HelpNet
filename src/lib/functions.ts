@@ -261,9 +261,9 @@ export function getCountryName(initials: string): string {
 export async function getToken(auth: string) {
     let token = null;
     try {
-        token = await (await fetch("https://help-net-liart.vercel.app/api/verify", {method: "POST", body:JSON.stringify({token: auth})})).json();
+        token = await (await fetch("http://localhost:3000/api/verify", {method: "POST", body:JSON.stringify({token: auth})})).json();
     } catch {
-        token = await (await fetch("/api/verify", {method: "POST", body: JSON.stringify({token: auth})}));
+        token = await (await fetch("https://help-net-liart.vercel.app/api/verify", {method: "POST", body: JSON.stringify({token: auth})}));
     }
     return token;
 }

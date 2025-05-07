@@ -7,6 +7,7 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [load, setLoad] = useState(false);
+    const [msg, setMsg] = useState('');
     return (
     <main className='w-screen h-screen bg-slate-100 font-sans flex'>
         <div className='w-16 md:w-2/4 h-fit m-auto bg-white rounded-md box-border space-y-4'>
@@ -19,6 +20,9 @@ const Login = () => {
             <div>
                 <label className='mx-6 text-lg text-black' htmlFor="password">Password:</label>
                 <input onChange={(e) => setPassword(e.target.value)} type='password' id="password" placeholder='Password' className='mx-6 text-xl border-2 outline-none rounded-md p-2 w-11/12 mt-1 text-black'></input>
+            </div>
+            <div>
+                <p className="text-red-600 mx-6 text-md pt-2">{msg}</p>
             </div>
             <button onClick={async () => {
                 setLoad(true);
@@ -33,9 +37,11 @@ const Login = () => {
                         expires: new Date(Date.now() + 7*24*60*60*1000)
                     });
                     window.location.assign(window.location.origin + '/home');
+                } else {
+                    setMsg(json.message);
                 }
                 setLoad(false);
-            }} className='bg-black px-4 py-4 !my-8 text-white rounded-md w-11/12 mx-6'>{load ? <Loading /> : "Login"}</button>
+            }} className='bg-black px-4 py-4 mb-4 text-white rounded-md w-11/12 mx-6'>{load ? <Loading /> : "Login"}</button>
             <div className='absolute flex flex-row gap-x-4 text-lg font-medium justify-center'>
                 {"Don't have an account?"}
                 <Link href="/register" className='hover:underline'>Sign Up</Link>

@@ -14,5 +14,5 @@ const notificationSchema = new mongoose.Schema({
     read: { type: Boolean, default: false },
   });
   
-const Notification = mongoose.models.Notification || mongoose.model("Notifications", notificationSchema);
+const Notification = mongoose.models.Notifications || mongoose.model("Notifications", notificationSchema);
 export default Notification;  
