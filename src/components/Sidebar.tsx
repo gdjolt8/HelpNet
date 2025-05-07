@@ -86,7 +86,7 @@ const Sidebar = ({ username }: { username: string | undefined }) => {
         <div className="mt-4 bg-gray-100 p-4 rounded">
           <h3 className="text-lg font-semibold">Notifications</h3>
           <ul>
-            {notifications.map((notification) => (
+            {notifications.slice(0, 3).map((notification) => (
               <li
                 key={notification._id}
                 className={`p-2 ${notification.read ? "bg-gray-200" : "bg-blue-100"} mb-2`}
