@@ -127,7 +127,7 @@ const HomePage = () => {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div className="flex h-screen bg-gray-50 font-sans">
+    <div className="flex h-screen bg-gray-50 font-sans text-black">
       <Sidebar username={acc?.username} />
   
       <main className="flex-1 bg-gray-100 p-6 overflow-y-auto">
