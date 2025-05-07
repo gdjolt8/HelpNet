@@ -189,7 +189,7 @@ const PostCard = ({ post }: PostProps) => {
       <p className="text-gray-500 text-sm mb-2">
         Created at {new Date(post.creationDate).toLocaleString()}
       </p>
-      <h3 className="font-semibold text-xl mb-2">{post.title}</h3>
+      <h3 className="font-semibold text-xl mb-2 text-black">{post.title}</h3>
       <p className="text-gray-700 mb-2">{post.description}</p>
       <div className="text-gray-600 mb-4">
         {post.follower_only
