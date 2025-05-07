@@ -125,7 +125,7 @@ const PostCard = ({ post }: PostProps) => {
       className="p-6 border rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
     >
       <div className="flex items-center mb-4 justify-between">
-        <Link href={`/profile?username=${post.author}`} onClick={(e) => e.stopPropagation()}>
+        <Link className="hover:underline" href={`/profile?user=${post.author}`} onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-4">
             <img
               src={author?.profile_picture_url || "/default-avatar.png"}
