@@ -91,7 +91,7 @@ const Sidebar = ({ username }: { username: string | undefined }) => {
                 key={notification._id}
                 className={`p-2 ${notification.read ? "bg-gray-200" : "bg-blue-100"} mb-2`}
               >
-                <p>{notification.message}</p>
+                <p className="text-black">{notification.message}</p>
                 <button
                   onClick={() => markAsRead(notification._id)}
                   className={`mt-2 text-xs ${notification.read ? "text-gray-500" : "text-blue-600"}`}
