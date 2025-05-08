@@ -190,7 +190,7 @@ const PostPage = () => {
   return (
     <>
       <Navbar type={2} />
-      <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg space-y-6 font-sans">
+      <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg space-y-6 font-sans text-black">
         {/* User Profile Card */}
         {/* Follow-Only Content */}
         {!isFollowing && user?.username != author?.username && post?.follower_only ? (
