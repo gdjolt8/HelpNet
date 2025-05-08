@@ -141,7 +141,9 @@ const PostPage = () => {
     const imageUrls: string[] = [];
     try {
 
-      const images = formData.getAll("images").filter((file) => file instanceof File) as File[];
+      const images = formData.getAll("images")
+      .filter((file): file is File => file instanceof File && file.name != '' && file.size > 0);
+      console.log("img len: " + images.length, formData);
       for (const image of images) {
         const fileName = `images/${Date.now()}-${image.name}`;
         const { data, error } = await supabase.storage.from("images").upload(fileName, image);
@@ -190,16 +192,16 @@ const PostPage = () => {
   return (
     <>
       <Navbar type={2} />
-      <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg space-y-6 font-sans text-black">
+      <div className="p-9 w-[99.9%] h-screen mx-auto bg-white rounded-lg shadow-lg space-y-6 font-sans text-black">
         {/* User Profile Card */}
         {/* Follow-Only Content */}
         {!isFollowing && user?.username != author?.username && post?.follower_only ? (
-          <><div className="flex items-center justify-between gap-4">
+          <><div className="flex flex-row items-center justify-between gap-4">
             <div>
               <img
                 src={author?.profile_picture_url || "/default-avatar.png"}
                 alt={`${post?.author}'s profile`}
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-24 h-24 rounded-full object-cover"
               />
               <div>
                 <span className="font-semibold text-lg">

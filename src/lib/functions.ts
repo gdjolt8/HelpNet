@@ -259,14 +259,25 @@ export function getCountryName(initials: string): string {
 }
 
 export async function getToken(auth: string) {
-    let token = null;
+    const isLocalhost = typeof window !== "undefined" && window.location.hostname === "localhost";
+    const origin = isLocalhost
+        ? "http://localhost:3000"
+        : "https://help-net-liart.vercel.app";
+
     try {
-        token = await (await fetch("https://help-net-liart.vercel.app/api/verify", {method: "POST", body:JSON.stringify({token: auth})})).json();
-    } catch {
-        token = await (await fetch("https://localhost:3000/api/verify", {method: "POST", body: JSON.stringify({token: auth})}));
+        const response = await fetch(`${origin}/api/verify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: auth }),
+        });
+        const token = await response.json();
+        return token;
+    } catch (error) {
+        console.error("Token verification failed:", error);
+        return null;
     }
-    return token;
 }
+
 
 export async function getGeoData(ip: string) {
     try {

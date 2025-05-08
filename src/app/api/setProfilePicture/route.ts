@@ -10,9 +10,7 @@ export async function POST(request: Request) {
     const user = await Users.findOne({username: auth.username});
     if (user) {
         console.log("updating " + user.username);
-        user.profile_picture_url = image_url;
-        await user.save();
-        //await Users.findOneAndUpdate({username: user.username}, {$set: {profile_picture_url: image_url}});
+        await Users.findOneAndUpdate({username: user.username}, {$set: {profile_picture_url: image_url}});
     } else {
         return new Response(JSON.stringify({message: "Access denied", ok: false}), {status: 400});
     }

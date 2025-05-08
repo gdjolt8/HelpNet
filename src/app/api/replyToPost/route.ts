@@ -19,13 +19,13 @@ export async function POST(req: Request) {
       body: JSON.stringify({ username: author }),
     });
     const user = await userRes.json();
-
+    console.log(user);
     // Update the post with the new reply
     await Posts.findByIdAndUpdate(postId, {
       $push: {
         replies: {
           creationDate: new Date(),
-          author: user,
+          author: user.user,
           content: message,
           likes: 0,
           views: 0,
