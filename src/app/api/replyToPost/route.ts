@@ -1,9 +1,10 @@
+import { getToken } from "@/lib/functions";
 import Posts from "@/models/Post";
 
 export async function POST(req: Request) {
   try {
-    const {postId, author, message, images} = await req.json();
-    if (!postId || !author || !message) {
+    const {postId, authorization, message, images} = await req.json();
+    if (!postId || !authorization || !message) {
       return new Response(JSON.stringify({ message: "Missing required fields" }), { status: 400 });
     }
 
@@ -14,12 +15,17 @@ export async function POST(req: Request) {
     }
 
     // Fetch user data for the reply author
-    const userRes = await fetch("https://help-net-liart.vercel.app/api/getUserInfo", {
+    const token = (await getToken(authorization));
+    let userRes;
+    if (token) {
+     userRes = await fetch("https://help-net-liart.vercel.app/api/getUserInfo", {
       method: "POST",
-      body: JSON.stringify({ username: author }),
-    });
+      body: JSON.stringify({ username: token.account.username }),
+      });
+    } else {
+      return new Response(JSON.stringify({ok: false, message: "Access denied"}), {status: 400});
+    }
     const user = await userRes.json();
-    console.log(user);
     // Update the post with the new reply
     await Posts.findByIdAndUpdate(postId, {
       $push: {
