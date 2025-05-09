@@ -269,7 +269,7 @@ const PostPage = () => {
               Created at {post?.creationDate ? new Date(post.creationDate).toLocaleString() : "N/A"}
             </p>
             <h1 className="text-2xl font-semibold mt-2 mb-3">{post?.title || "No Title"}</h1>
-            {!editing && <div className="text-gray-700 mt-2">{renderContentWithBreaks(post?.content || "No Content")}</div>}
+            {!editing && <div className="text-gray-700 mt-2">{renderContentWithBreaks(content)}</div>}
             {editing && <textarea onBlur={editPost} className="text-gray-700 mt-2 w-full h-32 outline-0 border-1 rounded-md p-2" value={content} onChange={(e) => setContent(e.target.value)} />}
             
             {/* Post Images */}
