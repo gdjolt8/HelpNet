@@ -184,7 +184,7 @@ const PostPage = () => {
         method: "POST",
         body: JSON.stringify({
           postId: postId,
-          author: author?.username,
+          authorization: String(Cookies.get("authorization")),
           message: formData.get("message")?.toString(),
           images: imageUrls,
         }),
