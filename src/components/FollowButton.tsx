@@ -5,7 +5,7 @@ const FollowButton = ({followUser, isFollowing, loading}: { followUser: MouseEve
   return (
     <button
     onClick={followUser}
-    className={`rounded-md ${isFollowing ? "bg-red-600 hover:bg-rate-400" : "bg-blue-600 hover:bg-blue-400"} px-4 py-2 text-white font-bold`}
+    className={`rounded-md ${isFollowing ? "bg-red-600 hover:bg-red-400" : "bg-blue-600 hover:bg-blue-400"} px-4 py-2 text-white font-bold`}
   >
     {loading ? <Loading /> : isFollowing ? "Unfollow" : "Follow"}
   </button>

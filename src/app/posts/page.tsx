@@ -29,6 +29,9 @@ const PostPage = () => {
   const [replies, setReplies] = useState<Reply[]>([]);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isAllLoaded, setIsAllLoaded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [content, setContent] = useState("");
+
   useEffect(() => {
     if (!postId) notFound();
     const fetchPostData = async () => {
@@ -47,6 +50,7 @@ const PostPage = () => {
         setPost(postData.post);
         setLikes(postData.post.likes?.length || 0);
         setReplies(postData.post.replies || []);
+        setContent(post?.content || "No Content");
 
           const userResponse = await getToken(String(Cookies.get("authorization")));
           if (!userResponse.ok) {
@@ -133,6 +137,19 @@ const PostPage = () => {
       console.error("Error liking post:", error);
     }
   };
+  const editPost = async () => {
+    try {
+      await fetch("/api/editPost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ authorization: String(Cookies.get("authorization")), new_post: content }),
+      });
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
 
   const handleReply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -188,11 +205,10 @@ const PostPage = () => {
 
   const renderContentWithBreaks = (content: string) =>
     content.split("\n").map((line, index) => (line != '' ? <p key={index}>{line}</p> : <br key={index} />));
-
   return (
     <>
       <Navbar type={2} />
-      <div className="p-9 w-[99.9%] h-screen mx-auto bg-white rounded-lg shadow-lg space-y-6 font-sans text-black">
+      <div className="p-9 w-[99.9%] min-h-screen mx-auto bg-white rounded-lg shadow-lg space-y-6 font-sans text-black">
         {/* User Profile Card */}
         {/* Follow-Only Content */}
         {!isFollowing && user?.username != author?.username && post?.follower_only ? (
@@ -211,7 +227,7 @@ const PostPage = () => {
               </div>
             </div>
 
-            <FollowButton followUser={followUser} isFollowing={isFollowing} loading={fLoad} />
+            {user?.username != author?.username && <FollowButton followUser={followUser} isFollowing={isFollowing} loading={fLoad} />}
           </div>
             <span className="text-sm text-gray-500">
               Created at {post?.creationDate ? new Date(post.creationDate).toLocaleString() : "N/A"}
@@ -226,30 +242,36 @@ const PostPage = () => {
           <>
             {/* Post Author */}
             <div className="flex items-center justify-between gap-4">
-              <div>
+              <Link href={`/profile?user=${post?.author}`} className="flex flex-row gap-x-[1.2rem]">
                 <img
                   src={author?.profile_picture_url || "/default-avatar.png"}
                   alt={`${post?.author}'s profile`}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-20 h-20 rounded-full object-cover hover:opacity-90 mt-[4%]"
                 />
-                <div>
-                  <p className="font-semibold text-lg">
-                    {post?.author} {author?.admin && <span className="text-blue-500">🛡️</span>}
+                <div className="mt-[10%]">
+                  <div className="flex flex-row gap-x-1.5 h-8">
+                  <p className="font-semibold text-2xl hover:underline">
+                    {post?.author}
                   </p>
-                  <p className="text-gray-500">@{post?.author}</p>
+                  {author?.admin && <span className="text-blue-500 mb-[5%] text-2xl">🛡️</span>}
+                  </div>
+                  <p className="text-gray-500 text-xl">@{post?.author}</p>
                 </div>
+              </Link>
+              <div className="flex flex-row gap-x-2">
+                {user?.username == author?.username && <button onClick={() => setEditing(!editing)}className="bg-green-600 hover:bg-green-400 px-4 py-2 rounded-md text-white font-bold">{editing ? "Unedit" : "Edit"}</button>}
+                {user?.username != author?.username && <FollowButton followUser={followUser} isFollowing={isFollowing} loading={fLoad} />}
               </div>
-
-              <FollowButton followUser={followUser} isFollowing={isFollowing} loading={fLoad} />
             </div>
 
             {/* Post Content */}
-            <p className="text-sm text-gray-500">
+            <p className="text-md text-gray-500">
               Created at {post?.creationDate ? new Date(post.creationDate).toLocaleString() : "N/A"}
             </p>
-            <h1 className="text-2xl font-semibold mt-4">{post?.title || "No Title"}</h1>
-            <div className="text-gray-700 mt-2">{renderContentWithBreaks(post?.content || "No Content")}</div>
-
+            <h1 className="text-2xl font-semibold mt-2 mb-3">{post?.title || "No Title"}</h1>
+            {!editing && <div className="text-gray-700 mt-2">{renderContentWithBreaks(post?.content || "No Content")}</div>}
+            {editing && <textarea onBlur={editPost} className="text-gray-700 mt-2 w-full h-32 outline-0 border-1 rounded-md p-2" value={content} onChange={(e) => setContent(e.target.value)} />}
+            
             {/* Post Images */}
             {(() => {
               const imgsLength = post?.images.filter(
@@ -313,7 +335,7 @@ const PostPage = () => {
                 onClick={handleLike}
               >
                 <HeartIcon className="w-6 h-6" />
-                <span>{likes} likes</span>
+                <span>{likes} {(likes == 1 ? "like" : "likes")}</span>
               </button>
               <div className="flex items-center gap-2 text-gray-500">
                 <ChartBarIcon className="w-6 h-6" />
@@ -354,23 +376,28 @@ const PostPage = () => {
               </div>
 
               {/* Replies */}
-              <div className="mt-6 space-y-4">
+              <div className="space-y-4">
                 <h2 className="font-semibold text-lg">Replies</h2>
                 {replies.map((reply, index) => (
                   <div key={index} className="flex gap-4 p-4 bg-gray-50 rounded-lg shadow-md">
                     <img
                       src={reply.author.profile_picture_url || "/default-avatar.png"}
                       alt={`${reply.author.username}'s profile`}
-                      className="w-10 h-10 rounded-full"
+                      className="w-12 h-12 rounded-full"
                     />
                     <div>
-                      <p className="font-semibold">
+                      <Link href={`/profile?user=${reply.author.username}`}>
+                      <p className="font-semibold hover:underline h-5">
                         {reply.author.username} {reply.author.admin && <span className="text-blue-500">🛡️</span>}
                       </p>
+                      <p className="mb-0.5 text-sm text-gray-400">
+                        @{reply.author.username}
+                      </p>
+                      </Link>
                       <p className="text-sm text-gray-500">
                         {new Date(reply.creationDate || Date.now()).toLocaleString()}
                       </p>
-                      <div className="text-gray-700 mt-1">{renderContentWithBreaks(reply.content)}</div>
+                      <div className="text-gray-700 text-lg my-2">{renderContentWithBreaks(reply.content)}</div>
                       {(() => {
                         const imgsLength = post?.images.filter(
                           (image) => image.endsWith(".png") || image.endsWith(".jpg") || image.endsWith(".webp") || image.endsWith(".gif")
