@@ -144,7 +144,7 @@ const PostPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ authorization: String(Cookies.get("authorization")), new_post: content }),
+        body: JSON.stringify({ authorization: String(Cookies.get("authorization")), new_post: content, post_id: postId }),
       });
     } catch (error) {
       console.error("Error liking post:", error);
